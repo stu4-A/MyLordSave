@@ -56,3 +56,10 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 LOGIN_REDIRECT_URL = 'home'
 LOGOUT_REDIRECT_URL = 'login'
 LOGIN_URL = 'login'
+DEBUG = False  # Set to False in production
+
+ALLOWED_HOSTS = ['mylordsave.onrender.com', 'localhost', '127.0.0.1']
+
+CSRF_TRUSTED_ORIGINS = ['https://mylordsave.onrender.com']
+
+
