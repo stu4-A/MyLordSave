@@ -60,6 +60,8 @@ DEBUG = False  # Set to False in production
 
 ALLOWED_HOSTS = ['mylordsave.onrender.com', 'localhost', '127.0.0.1']
 
-CSRF_TRUSTED_ORIGINS = ['https://mylordsave.onrender.com']
+
+CSRF_TRUSTED_ORIGINS = os.getenv("CSRF_TRUSTED_ORIGINS", "https://mylordsave.onrender.com").split(",")
+
 
 
