@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-4">
+  <h1>Career Opportunities</h1>
+
+  <!-- Search and filter form -->
+  <div class="row mb-4">
+    <div class="col-md-8">
+      <div class="card p-3">
+        <form method="get" class="row g-2">
+          <div class="col-md-6">
+            <input name="q" value="{{ q }}" class="form-control" placeholder="Search by company, role or description">
+          </div>
+          <div class="col-md-4">
+            <select name="filter" class="form-select">
+              <option value="">Sort by deadline</option>
+              <option value="deadline" {% if filter == 'deadline' %}selected{% endif %}>Deadline (asc)</option>
+              <option value="newest" {% if filter == 'newest' %}selected{% endif %}>Newest</option>
+            </select>
+          </div>
+          <div class="col-md-2">
+            <button class="btn btn-success w-100">Search</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <!-- Opportunities list -->
+    <div class="col-md-8">
+      {% for opp in opportunities %}
+      <div class="card mb-3 p-3">
+        <div class="d-flex justify-content-between">
+          <div>
+            <h5>
+              <a href="{% url 'opportunity_detail' opp.pk %}">
+                {{ opp.company }} — {{ opp.role }}
+              </a>
+            </h5>
+            <p class="mb-1">{{ opp.description|truncatechars:200 }}</p>
+            <small>Deadline: {{ opp.deadline }}</small>
+          </div>
+          <div class="text-end">
+            <small class="text-muted">Posted: {{ opp.created_at|date:"Y-m-d" }}</small>
+          </div>
+        </div>
+      </div>
+      {% empty %}
+        <p>No opportunities found.</p>
+      {% endfor %}
+    </div>
+
+    <!-- Sidebar -->
+    <div class="col-md-4">
+      <!-- Recommendations -->
+      <div class="card p-3 mb-3">
+        <h6>Recommendations</h6>
+        {% if recommendations %}
+          {% for r in recommendations %}
+            <div>
+              <a href="{% url 'opportunity_detail' r.pk %}">{{ r.company }} — {{ r.role }}</a>
+            </div>
+          {% endfor %}
+        {% else %}
+          <div><em>No recommendations — add skills or subjects in your profile.</em></div>
+        {% endif %}
+      </div>
+
+      <!-- Quick tips -->
+      <div class="card p-3">
+        <h6>Quick tips</h6>
+        <ul>
+          <li>Search roles or companies</li>
+          <li>Save interesting opportunities</li>
+          <li>Apply directly and receive notifications</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

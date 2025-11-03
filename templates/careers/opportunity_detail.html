@@ -1,0 +1,100 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-4">
+
+  <!-- Header and Navigation -->
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h3>{{ opp.company }} — {{ opp.role }}</h3>
+    <div>
+      {% if user.userprofile.role == 'student' %}
+        <a href="{% url 'opportunity_list' %}" class="btn btn-secondary btn-sm">← Back to Opportunities</a>
+        <a href="{% url 'home' %}" class="btn btn-secondary btn-sm">Home</a>
+      {% elif user.userprofile.role == 'lecturer' %}
+        <a href="{% url 'manage_opportunities' %}" class="btn btn-secondary btn-sm">← Back to Manage Opportunities</a>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Opportunity Information -->
+  <div class="card p-4 shadow-sm">
+    <p>{{ opp.description }}</p>
+    <p><strong>Deadline:</strong> {{ opp.deadline|date:"Y-m-d" }}</p>
+    <p><strong>Application Link:</strong> 
+      <a href="{{ opp.link }}" target="_blank" class="text-decoration-none text-primary">Open Application Page</a>
+    </p>
+
+    <!-- Student Actions: Save / Apply -->
+    {% if user.is_authenticated and user.userprofile.role == 'student' %}
+    <div class="mt-4">
+      <!-- Save/Unsave button -->
+      <form method="post" action="{% url 'save_toggle' opp.pk %}" style="display:inline;">
+        {% csrf_token %}
+        <button class="btn btn-outline-primary btn-sm">
+          {% if saved %}Unsave{% else %}Save{% endif %}
+        </button>
+      </form>
+
+      <!-- Apply Button -->
+      {% if not applied %}
+        <button class="btn btn-success btn-sm" data-bs-toggle="collapse" data-bs-target="#applyForm">
+          Apply for this Opportunity
+        </button>
+
+        <div id="applyForm" class="collapse mt-3">
+          <div class="card card-body">
+            <form method="post" action="{% url 'apply_opportunity' opp.pk %}">
+              {% csrf_token %}
+              {{ form.as_p }}
+              <button class="btn btn-primary">Submit Application</button>
+            </form>
+          </div>
+        </div>
+      {% else %}
+        <span class="badge bg-success">✅ You have already applied</span>
+      {% endif %}
+    </div>
+    {% endif %}
+
+  </div>
+
+  <!-- Lecturer's Applicant View -->
+  {% if user.is_authenticated and user.userprofile.role == 'lecturer' %}
+  <div class="mt-5">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h4>📋 Applicants ({{ applicants.count|default:0 }})</h4>
+      <a href="{% url 'manage_opportunities' %}" class="btn btn-secondary btn-sm">← Back to Manage Opportunities</a>
+    </div>
+
+    {% if applicants %}
+      <div class="table-responsive mt-3">
+        <table class="table table-striped table-bordered align-middle">
+          <thead class="table-success">
+            <tr>
+              <th>#</th>
+              <th>Student Name</th>
+              <th>Email</th>
+              <th>Application Date</th>
+              <th>Message / Cover Letter</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for application in applicants %}
+              <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>{{ application.student.get_full_name|default:application.student.username }}</td>
+                <td>{{ application.student.email }}</td>
+                <td>{{ application.created_at|date:"Y-m-d H:i" }}</td>
+                <td>{{ application.message|default:"—" }}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% else %}
+      <p class="text-muted">No students have applied yet for this opportunity.</p>
+    {% endif %}
+  </div>
+  {% endif %}
+
+</div>
+{% endblock %}

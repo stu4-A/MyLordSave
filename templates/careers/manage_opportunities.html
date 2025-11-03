@@ -1,0 +1,147 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+<style>
+  .dashboard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 40px;
+    margin-bottom: 20px;
+  }
+
+  .dashboard-header h2 {
+    color: #2e7d32; /* Agricultural green tone */
+    font-weight: 700;
+  }
+
+  .btn-success {
+    background-color: #43a047;
+    border: none;
+  }
+
+  .btn-success:hover {
+    background-color: #2e7d32;
+  }
+
+  .card {
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+  }
+
+  .card-header {
+    background-color: #e8f5e9;
+    font-weight: bold;
+    color: #2e7d32;
+  }
+
+  .table th {
+    background-color: #e8f5e9;
+  }
+
+  .summary-box {
+    background-color: #f1f8e9;
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+    color: #2e7d32;
+    font-weight: 600;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+  }
+</style>
+  <!-- Summary Section -->
+ 
+<div class="container">
+  <div class="dashboard-header d-flex justify-content-between align-items-center mb-4">
+    <h2>Manage Your Opportunities</h2>
+    <a href="{% url 'create_opportunity' %}" class="btn btn-success">+ Post New Opportunity</a>
+  </div>
+
+  <!-- Summary Section -->
+  <div class="row mb-4">
+    <div class="col-md-4">
+      <div class="summary-box p-3 shadow-sm text-center">
+        <h4>{{ opportunities.count|default:0 }}</h4>
+        <p>Total Opportunities</p>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="summary-box p-3 shadow-sm text-center">
+        <h4>{{ opportunities|length|default:0 }}</h4>
+        <p>Active Listings</p>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="summary-box p-3 shadow-sm text-center">
+        <h4>
+          {% if opportunities %}
+            {% with sorted_ops=opportunities|dictsort:"deadline" %}
+              {{ sorted_ops.0.deadline|date:"M d, Y" }}
+            {% endwith %}
+          {% else %}
+            -
+          {% endif %}
+        </h4>
+        <p>Next Deadline</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Opportunities Table -->
+  <div class="card shadow-sm">
+    <div class="card-header">
+      <h5 class="mb-0">Your Posted Opportunities</h5>
+    </div>
+    <div class="card-body">
+      <table class="table table-hover align-middle">
+        <thead>
+          <tr>
+            <th>Company</th>
+            <th>Role</th>
+            <th>Deadline</th>
+            <th>Posted</th>
+            <th style="width:220px;">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% if opportunities %}
+            {% for opp in opportunities %}
+              <tr>
+                <td>{{ opp.company|default:"-" }}</td>
+                <td>{{ opp.role|default:"-" }}</td>
+                <td>{{ opp.deadline|date:"M d, Y"|default:"-" }}</td>
+                <td>{{ opp.created_at|date:"M d, Y"|default:"-" }}</td>
+                <td class="d-flex gap-1">
+                  <a href="{% url 'edit_opportunity' opp.pk %}" class="btn btn-sm btn-primary">
+                    <i class="bi bi-pencil"></i> Edit
+                  </a>
+
+                  <form method="post" action="{% url 'delete_opportunity' opp.pk %}" style="display:inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-sm btn-danger">
+                      <i class="bi bi-trash"></i> Delete
+                    </button>
+                  </form>
+
+                  <!-- View Applicants Button -->
+                  <a href="{% url 'view_applications' opp.pk %}" class="btn btn-sm btn-info">
+                    <i class="bi bi-people"></i> Applicants
+                  </a>
+                </td>
+              </tr>
+            {% endfor %}
+          {% else %}
+            <tr>
+              <td colspan="5" class="text-center text-muted">
+                No opportunities posted yet. Click "Post New Opportunity" above to create one.
+              </td>
+            </tr>
+          {% endif %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

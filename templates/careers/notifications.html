@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-4">
+
+  <!-- Page header and navigation -->
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h4>Your Notifications</h4>
+    <div>
+      <a href="{% url 'opportunity_list' %}" class="btn btn-secondary btn-sm">Opportunities</a>
+      <a href="{% url 'home' %}" class="btn btn-secondary btn-sm">Home</a>
+    </div>
+  </div>
+
+  <div class="card p-3">
+    {% if notifications %}
+      <ul class="list-group">
+        {% for n in notifications %}
+          <li class="list-group-item {% if not n.read %}fw-bold{% endif %}">
+            {{ n.date|date:"Y-m-d H:i" }} — {{ n.message }}
+          </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p>No notifications.</p>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

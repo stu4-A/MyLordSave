@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+
+  <!-- Page header and navigation -->
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h4>Edit Profile</h4>
+    <div>
+      <a href="{% url 'opportunity_list' %}" class="btn btn-secondary btn-sm">Opportunities</a>
+      <a href="{% url 'notifications' %}" class="btn btn-secondary btn-sm">Notifications</a>
+      <a href="{% url 'home' %}" class="btn btn-secondary btn-sm">Home</a>
+    </div>
+  </div>
+
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <div class="card p-4 shadow-sm">
+        <form method="post">
+          {% csrf_token %}
+          {{ form.as_p }}
+          <div class="d-flex justify-content-between mt-3">
+            <a href="{% url 'opportunity_list' %}" class="btn btn-outline-secondary">← Back</a>
+            <button type="submit" class="btn btn-success">Save Changes</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+</div>
+{% endblock %}

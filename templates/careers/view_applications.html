@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+
+  <!-- Back Navigation -->
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h3>Applicants for: {{ opp.company }} — {{ opp.role }}</h3>
+    <div>
+      <a href="{% url 'manage_opportunities' %}" class="btn btn-secondary btn-sm">← Back to Dashboard</a>
+      <a href="{% url 'home' %}" class="btn btn-secondary btn-sm">Home</a>
+    </div>
+  </div>
+
+  <!-- Applicants Table -->
+  <div class="card shadow-sm">
+    <div class="card-header">
+      <h5 class="mb-0">📋 Applicants ({{ applications.count|default:0 }})</h5>
+    </div>
+    <div class="card-body">
+      {% if applications %}
+      <div class="table-responsive">
+        <table class="table table-striped table-bordered align-middle">
+          <thead class="table-success">
+            <tr>
+              <th>#</th>
+              <th>Student Name</th>
+              <th>Email</th>
+              <th>Application Date</th>
+              <th>Message / Cover Letter</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for application in applications %}
+              <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>{{ application.student.user.get_full_name|default:application.student.user.username }}</td>
+                <td>{{ application.student.user.email }}</td>
+                <td>{{ application.created_at|date:"Y-m-d H:i" }}</td>
+                <td>{{ application.message|default:"—" }}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% else %}
+        <p class="text-muted">No students have applied yet for this opportunity.</p>
+      {% endif %}
+    </div>
+  </div>
+
+</div>
+{% endblock %}

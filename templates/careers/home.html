@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-4">
+
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h1>Welcome to the Student Careers Portal</h1>
+    {% if user.is_authenticated %}
+      <span class="badge bg-success">Logged in as {{ user.username }}</span>
+    {% else %}
+      <a href="{% url 'login' %}" class="btn btn-success">Login</a>
+    {% endif %}
+  </div>
+
+  <div class="row mt-4">
+    <div class="col-md-4">
+      <div class="card p-3 text-center">
+        <h5>Career Opportunities</h5>
+        <p>View available internships and job opportunities tailored for students.</p>
+        <a href="{% url 'opportunity_list' %}" class="btn btn-primary">View Opportunities</a>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="card p-3 text-center">
+        <h5>Notifications</h5>
+        <p>Check your notifications for updates on applications or saved opportunities.</p>
+        {% if user.is_authenticated %}
+          <a href="{% url 'notifications' %}" class="btn btn-primary">View Notifications</a>
+        {% else %}
+          <a href="{% url 'login' %}?next={% url 'notifications' %}" class="btn btn-secondary">Login to View</a>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="card p-3 text-center">
+        <h5>Edit Profile</h5>
+        <p>Update your skills, enrolled subjects, and preferences to get better recommendations.</p>
+        {% if user.is_authenticated %}
+          <a href="{% url 'edit_profile' %}" class="btn btn-primary">Edit Profile</a>
+        {% else %}
+          <a href="{% url 'login' %}?next={% url 'edit_profile' %}" class="btn btn-secondary">Login to Edit</a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
