@@ -2,7 +2,9 @@ import os
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = 'dev-secret-for-local'
 DEBUG = True
-ALLOWED_HOSTS = ['https://mylordsave.onrender.com']
+ALLOWED_HOSTS = ['mylordsave.onrender.com',  
+    'localhost',                
+    '127.0.0.1',]
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
